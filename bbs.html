@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBS - KOKONA'S WEB ROOM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <p class="subtitle">★ LET'S TALK ★</p>
+    <h1>☆ GUEST BOOK ☆</h1>
+    <p>～ あしあと残していってね ♡ ～</p>
+
+    <hr>
+
+    <marquee>☆★☆ 書き込み大歓迎！！ ☆★☆ 荒らしはだめだぞっ ☆★☆</marquee>
+
+    <nav class="menu">
+      <a href="index.html">TOP</a>
+      <a href="profile.html">PROFILE</a>
+      <a href="diary.html">DIARY</a>
+      <a href="bbs.html">BBS</a>
+      <a href="link.html">LINK</a>
+    </nav>
+
+    <div class="notice">
+      <p>♡ WELCOME TO MY BBS ♡</p>
+      <p>気軽にコメントしてね！</p>
+      <p>※個人情報や秘密の情報は書き込まないでね。</p>
+    </div>
+
+    <h2>▼ POST FORM ▼</h2>
+
+    <form id="post-form">
+      <p>
+        NAME：<br>
+        <input id="post-name" type="text"
+          placeholder="なまえ" maxlength="30" required>
+      </p>
+
+      <p>
+        MESSAGE：<br>
+        <textarea id="post-message"
+          placeholder="メッセージを書いてね！"
+          maxlength="500" required></textarea>
+      </p>
+
+      <p>
+        <button type="submit" id="post-button">☆ POST ☆</button>
+      </p>
+    </form>
+
+    <p id="status-message"></p>
+
+    <hr>
+
+    <h2>▼ NEW MESSAGE ▼</h2>
+
+    <div id="post-list" class="welcome">
+      読み込み中...
+    </div>
+
+    <p><a href="index.html">← TOPに戻る</a></p>
+
+    <footer>© KOKONA'S WEB ROOM</footer>
+  </div>
+
+  <script>
+    const form = document.getElementById("post-form");
+    const nameInput = document.getElementById("post-name");
+    const messageInput = document.getElementById("post-message");
+    const postList = document.getElementById("post-list");
+    const statusMessage = document.getElementById("status-message");
+    const postButton = document.getElementById("post-button");
+
+    async function loadPosts() {
+      try {
+        const response = await fetch("/api/posts");
+
+        if (!response.ok) throw new Error();
+
+        const posts = await response.json();
+        postList.replaceChildren();
+
+        if (posts.length === 0) {
+          postList.textContent = "まだ書き込みはありません。最初の訪問者になってね ♡";
+          return;
+        }
+
+        posts.forEach(post => {
+          const article = document.createElement("div");
+          article.style.textAlign = "left";
+          article.style.padding = "12px";
+          article.style.borderBottom = "1px dashed #91d8f5";
+
+          const title = document.createElement("p");
+          title.style.color = "#e879b1";
+          title.style.fontWeight = "bold";
+          title.textContent = `No.${post.id}　${post.name}`;
+
+          const date = document.createElement("small");
+          date.textContent = post.created_at;
+
+          const message = document.createElement("p");
+          message.style.whiteSpace = "pre-wrap";
+          message.textContent = post.message;
+
+          article.append(title, date, message);
+          postList.appendChild(article);
+        });
+
+      } catch (error) {
+        postList.textContent = "投稿を読み込めなかったよ。あとでもう一度試してね。";
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      postButton.disabled = true;
+      statusMessage.textContent = "投稿中...";
+
+      try {
+        const response = await fetch("/api/posts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: nameInput.value,
+            message: messageInput.value
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "投稿に失敗しました。");
+        }
+
+        form.reset();
+        statusMessage.textContent = "投稿できたよ！ありがとう ♡";
+        await loadPosts();
+
+      } catch (error) {
+        statusMessage.textContent = error.message || "通信エラーが発生したよ。";
+      } finally {
+        postButton.disabled = false;
+      }
+    });
+
+    loadPosts();
+  </script>
+</body>
+</html>

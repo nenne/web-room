@@ -1,0 +1,14 @@
+
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "web-room",
+  "pages_build_output_dir": ".",
+  "compatibility_date": "2026-11-19",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "web-room-db",
+      "database_id": "f17c5d08-816a-4af5-9dbb-03f350f135f3"
+    }
+  ]
+}

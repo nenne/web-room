@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADMIN - KOKONA'S WEB ROOM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <p class="subtitle">★ ADMIN ONLY ★</p>
+    <h1>☆ CONTROL ROOM ☆</h1>
+    <p>～ 管理人専用ページ ～</p>
+
+    <hr>
+
+    <div class="notice">
+      <p>管理人以外は立ち入り禁止！</p>
+      <p>秘密鍵は他人に教えないでね。</p>
+    </div>
+
+    <h2>▼ LOGIN ▼</h2>
+
+    <form id="login-form">
+        <p id="status-message"></p>
+        <p>
+            ADMIN TOKEN：<br>
+            <input
+            id="admin-token"
+            type="password"
+            placeholder="秘密鍵を入力"
+            autocomplete="current-password"
+            required
+            >
+        </p>
+        <button type="submit">☆ LOGIN ☆</button>
+    </form>
+
+    <p>
+        <button type="button" id="logout-button" style="background:#aaa;">
+            LOGOUT
+        </button>
+    </p>
+
+    <hr>
+
+    <h2>▼ POST MANAGEMENT ▼</h2>
+    <div id="admin-post-list" class="welcome">
+      ログインすると投稿一覧が表示されます。
+    </div>
+
+    <p><a href="bbs.html">← BBSに戻る</a></p>
+
+    <footer>© KOKONA'S WEB ROOM</footer>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("login-form");
+    const tokenInput = document.getElementById("admin-token");
+    const statusMessage = document.getElementById("status-message");
+    const postList = document.getElementById("admin-post-list");
+
+    
+    const logoutButton = document.getElementById("logout-button");
+
+    logoutButton.addEventListener("click", () => {
+    adminToken = "";
+    tokenInput.value = "";
+    postList.textContent = "ログアウトしました。";
+    statusMessage.textContent = "またね！";
+    });
+
+
+    async function loadAdminPosts() {
+      postList.textContent = "読み込み中...";
+
+      try {
+        const response = await fetch("/api/posts", {
+          headers: {
+            "Authorization": `Bearer ${adminToken}`
+          }
+        });
+
+        if (!response.ok) throw new Error("投稿を取得できませんでした。");
+
+        const posts = await response.json();
+        postList.replaceChildren();
+
+        if (posts.length === 0) {
+          postList.textContent = "現在、投稿はありません。";
+          return;
+        }
+
+        posts.forEach(post => {
+          const article = document.createElement("div");
+          article.style.textAlign = "left";
+          article.style.padding = "12px";
+          article.style.borderBottom = "1px dashed #91d8f5";
+
+          const title = document.createElement("p");
+          title.style.fontWeight = "bold";
+          title.textContent = `No.${post.id}　${post.name}`;
+
+          const message = document.createElement("p");
+          message.style.whiteSpace = "pre-wrap";
+          message.textContent = post.message;
+
+          const date = document.createElement("small");
+          date.textContent = post.created_at;
+
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "この投稿を削除";
+          deleteButton.style.background = "#e879b1";
+
+          deleteButton.addEventListener("click", async () => {
+            if (!confirm(`No.${post.id} の投稿を削除する？`)) return;
+
+            try {
+              const deleteResponse = await fetch(
+                `/api/posts?id=${post.id}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    "Authorization": `Bearer ${adminToken}`
+                  }
+                }
+              );
+
+              if (!deleteResponse.ok) {
+                throw new Error("削除に失敗しました。");
+              }
+
+              statusMessage.textContent = `No.${post.id} を削除したよ！`;
+              await loadAdminPosts();
+
+            } catch (error) {
+              statusMessage.textContent = error.message;
+            }
+          });
+
+          article.append(title, date, message, deleteButton);
+          postList.appendChild(article);
+        });
+
+      } catch (error) {
+        postList.textContent = error.message;
+      }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      adminToken = tokenInput.value;
+      statusMessage.textContent = "認証中...";
+
+      await loadAdminPosts();
+
+      if (postList.textContent === "投稿を取得できませんでした。") {
+        statusMessage.textContent = "秘密鍵を確認してね。";
+        adminToken = "";
+      } else {
+        statusMessage.textContent = "ログイン成功！";
+        tokenInput.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
