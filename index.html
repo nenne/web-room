@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KOKONA'S WEB ROOM</title>
+  <title>UNKNOWN'S WEB ROOM</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,7 +13,7 @@
 
     <p class="subtitle">★ WELCOME TO MY HOMEPAGE ★</p>
 
-    <h1>☆ KOKONA'S WEB ROOM ☆</h1>
+    <h1>☆ UNKNOWN'S WEB ROOM ☆</h1>
 
     <p class="sparkle">
         ✧･ﾟ: *✧･ﾟ:* WELCOME *:･ﾟ✧*:･ﾟ✧
@@ -38,7 +38,7 @@
 
     <div class="notice">
     <span class="blink">★ NEW!! ★</span>
-    <p>2026.11.19　KOKONA'S WEB ROOM OPEN!!</p>
+    <p>2026.11.19　UNKNOWN'S WEB ROOM OPEN!!</p>
     <p>まだまだ工事中です... ♡</p>
   </div>
 
@@ -55,7 +55,7 @@
     <div class="welcome">
       <h2>♡ ABOUT THIS ROOM ♡</h2>
       <p>
-        ここはKOKONAの個人ホームページです。<br>
+        ここはUNKNOWNの個人ホームページです。<br>
         日常・趣味・好きなものなどを<br>
         気ままに更新していきます ☆
       </p>
@@ -64,17 +64,68 @@
 
     <hr>
 
-    <p class="counter">
-      あなたは 000001 人目のお客様です！
+    <div class="counter-area">
+    <p class="counter" id="visitor-counter">
+        カウント中... ☆
     </p>
 
+    <div id="kiriban-box" class="kiriban-box" hidden>
+        <p class="kiriban-title blink">
+        ★☆★ KIRIBAN GET!! ★☆★
+        </p>
+        <p>おめでとうございます！！♡</p>
+        <p>記念すべきキリ番を踏みました！</p>
+        <p>よかったらBBSで報告してね ☆</p>
+        <a href="bbs.html">▶ BBSへ報告する</a>
+    </div>
+    </div>
+
     <p>☆ SINCE 2026.11.19 ☆</p>
+    <hr>
+
+    <div class="bbs-corner">
+    <h2>☆★☆ GUEST BOOK ☆★☆</h2>
+    <p class="blink">＼ BBSに足あと残していってね！ ／</p>
+    <p>感想・キリ番報告・ひとこと大歓迎 ♡</p>
+    <a href="bbs.html">▶ BBSはこちら！</a>
+    </div>
 
     <footer>
-      © KOKONA'S WEB ROOM
+      © UNKNOWN'S WEB ROOM
       <p>無断転載禁止 ☆</p>
     </footer>
 
   </div>
+  <script>
+  async function updateVisitorCounter() {
+    const counter = document.getElementById("visitor-counter");
+    const kiribanBox = document.getElementById("kiriban-box");
+
+    try {
+      const response = await fetch("/api/visit", {
+        method: "POST"
+      });
+
+      if (!response.ok) {
+        throw new Error("Counter error");
+      }
+
+      const result = await response.json();
+      const count = result.count;
+
+      counter.textContent =
+        `あなたは ${String(count).padStart(6, "0")} 人目のお客様です！`;
+
+      if (count % 100 === 0) {
+        kiribanBox.hidden = false;
+      }
+
+    } catch (error) {
+      counter.textContent = "カウンター準備中... ☆";
+    }
+  }
+
+  updateVisitorCounter();
+  </script>
 </body>
 </html>

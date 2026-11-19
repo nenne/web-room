@@ -1,6 +1,6 @@
 
 /* =========================
-   KOKONA'S WEB ROOM
+   UNKNOWN'S WEB ROOM
    2000s retro style
 ========================= */
 
@@ -201,4 +201,103 @@ button:hover {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+.kiriban-box {
+  margin: 20px auto;
+  padding: 18px;
+  max-width: 500px;
+  background: linear-gradient(
+    135deg,
+    #fff0f8,
+    #fff9d9,
+    #eaffea,
+    #eafaff,
+    #f3eaff
+  );
+  border: 4px double transparent;
+  border-image: linear-gradient(
+    90deg,
+    red,
+    orange,
+    yellow,
+    lime,
+    cyan,
+    blue,
+    violet
+  ) 1;
+  box-shadow: 0 0 15px #ffb6e6;
+  color: #8b5b9e;
+  line-height: 1.8;
+}
+
+.kiriban-title {
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(
+    90deg,
+    #ff4d6d,
+    #ff9f43,
+    #f9ca24,
+    #6ab04c,
+    #22a6b3,
+    #4834d4,
+    #be2edd
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: rainbow-shine 2s linear infinite;
+}
+
+@keyframes rainbow-shine {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.kiriban-box a {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 16px;
+  background: #f4a6ce;
+  color: white;
+  text-decoration: none;
+  border: 2px outset #ffd4e9;
+}
+
+.kiriban-box a:hover {
+  background: #83cbea;
+}
+
+.kiriban-box[hidden] {
+  display: none;
+}
+
+.bbs-corner {
+  margin: 20px auto;
+  padding: 18px;
+  max-width: 500px;
+  background: #f5fcff;
+  border: 3px dotted #83cbea;
+  box-shadow: 0 0 10px #c4edff;
+  line-height: 1.8;
+}
+
+.bbs-corner h2 {
+  color: #4ca9dc;
+  text-shadow: 1px 1px #d5f4ff;
+}
+
+.bbs-corner a {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 18px;
+  background: #83cbea;
+  color: white;
+  border: 2px outset #bdeaff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.bbs-corner a:hover {
+  background: #ffacd4;
 }
