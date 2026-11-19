@@ -50,6 +50,15 @@ export async function onRequestPost({ request, env }) {
     const name = String(data.name || "").trim();
     const message = String(data.message || "").trim();
 
+    const website = String(data.website || "").trim();
+
+    if (website) {
+        return Response.json(
+            { error: "投稿できませんでした。" },
+            { status: 400 }
+        );
+    }
+
     if (!name || !message) {
       return Response.json(
         { error: "名前とメッセージを入力してね！" },

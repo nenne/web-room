@@ -35,6 +35,17 @@
     <h2>▼ POST FORM ▼</h2>
 
     <form id="post-form">
+      <div class="website-field" aria-hidden="true">
+        <label for="website">Website</label>
+        <input
+          id="website"
+          name="website"
+          type="text"
+          tabindex="-1"
+          autocomplete="off"
+        >
+      </div>
+
       <p>
         NAME：<br>
         <input id="post-name" type="text"
@@ -72,6 +83,7 @@
     const form = document.getElementById("post-form");
     const nameInput = document.getElementById("post-name");
     const messageInput = document.getElementById("post-message");
+    const websiteInput = document.getElementById("website");
     const postList = document.getElementById("post-list");
     const statusMessage = document.getElementById("status-message");
     const postButton = document.getElementById("post-button");
@@ -86,7 +98,8 @@
         postList.replaceChildren();
 
         if (posts.length === 0) {
-          postList.textContent = "まだ書き込みはありません。最初の訪問者になってね ♡";
+          postList.textContent =
+            "まだ書き込みはありません。最初の訪問者になってね ♡";
           return;
         }
 
@@ -113,7 +126,8 @@
         });
 
       } catch (error) {
-        postList.textContent = "投稿を読み込めなかったよ。あとでもう一度試してね。";
+        postList.textContent =
+          "投稿を読み込めなかったよ。あとでもう一度試してね。";
       }
     }
 
@@ -131,7 +145,8 @@
           },
           body: JSON.stringify({
             name: nameInput.value,
-            message: messageInput.value
+            message: messageInput.value,
+            website: websiteInput.value
           })
         });
 
@@ -146,7 +161,9 @@
         await loadPosts();
 
       } catch (error) {
-        statusMessage.textContent = error.message || "通信エラーが発生したよ。";
+        statusMessage.textContent =
+          error.message || "通信エラーが発生したよ。";
+
       } finally {
         postButton.disabled = false;
       }
